@@ -1,0 +1,10 @@
+classifier,config,f1,auc_roc,g_mean,wall_clock_sec,train_size,test_size
+logistic_regression,metrics_only,0.1224,0.6641,0.6495,0.1,500,100
+logistic_regression,embeddings_only,0.069,0.5651,0.433,0.08,500,100
+logistic_regression,hybrid,0.2,0.6823,0.7552,0.12,500,100
+random_forest,metrics_only,0.1538,0.6406,0.4787,0.38,500,100
+random_forest,embeddings_only,0.0,0.4453,0.0,0.93,500,100
+random_forest,hybrid,0.0,0.4766,0.0,0.95,500,100
+xgboost,metrics_only,0.1538,0.526,0.4787,0.14,500,100
+xgboost,embeddings_only,0.0,0.5729,0.0,3.47,500,100
+xgboost,hybrid,0.25,0.5964,0.4921,3.49,500,100

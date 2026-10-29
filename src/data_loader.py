@@ -4,7 +4,9 @@ from pathlib import Path
 
 import pandas as pd
 
-from config import COMMIT_COL, DATA_DIR, DATE_COL, LABEL_COL, METRIC_COLS, PROJECT
+from config import (
+    COMMIT_COL, DATA_DIR, DATE_COL, LABEL_COL, METRIC_COLS, PROJECT, TRAIN_RATIO, VAL_RATIO,
+)
 
 
 def find_dataset_csv() -> Path:
@@ -58,7 +60,8 @@ def sample_commits(df: pd.DataFrame, n: int, random_state: int = 42) -> pd.DataF
     return pd.concat(parts).sort_values(DATE_COL).reset_index(drop=True)
 
 
-def chronological_split(df: pd.DataFrame, train_ratio=0.7, val_ratio=0.1):
+def chronological_split(df: pd.DataFrame, train_ratio=TRAIN_RATIO, val_ratio=VAL_RATIO):
+    """Split a date-sorted frame in sequence: train | validation | test."""
     n = len(df)
     train_end = int(n * train_ratio)
     val_end = int(n * (train_ratio + val_ratio))
@@ -66,3 +69,11 @@ def chronological_split(df: pd.DataFrame, train_ratio=0.7, val_ratio=0.1):
     val = df.iloc[train_end:val_end].copy()
     test = df.iloc[val_end:].copy()
     return train, val, test
+
+
+def describe_split(name: str, part: pd.DataFrame) -> str:
+    return (
+        f"{name:5s} {len(part):6d} commits, {int(part[LABEL_COL].sum()):5d} buggy "
+        f"({part[LABEL_COL].mean():.1%}), "
+        f"{part[DATE_COL].min().date()} -> {part[DATE_COL].max().date()}"
+    )

@@ -1,0 +1,39 @@
+{
+  "device": "mps",
+  "smoke": false,
+  "split_train": "train  13620 commits,  2461 buggy (18.1%), 2007-03-19 -> 2015-09-24",
+  "split_val": "val     4540 commits,   458 buggy (10.1%), 2015-09-24 -> 2017-10-17",
+  "split_test": "test    4540 commits,   159 buggy (3.5%), 2017-10-17 -> 2019-12-26",
+  "extraction_train": {
+    "n_commits": 13620,
+    "n_single_window": 5279,
+    "n_chunked": 8341,
+    "n_chunks_total": 62586,
+    "n_truncated": 62,
+    "embed_seconds": 1561.5,
+    "commits_per_sec": 8.72,
+    "device": "mps",
+    "n_missing_commits": 0,
+    "n_without_java": 0
+  },
+  "extraction_test": {
+    "n_commits": 4540,
+    "n_single_window": 2203,
+    "n_chunked": 2337,
+    "n_chunks_total": 23599,
+    "n_truncated": 61,
+    "embed_seconds": 600.3,
+    "commits_per_sec": 7.56,
+    "device": "mps",
+    "n_missing_commits": 0,
+    "n_without_java": 0
+  },
+  "train_used": {
+    "n": 13620,
+    "buggy": 2461
+  },
+  "test_used": {
+    "n": 4540,
+    "buggy": 159
+  }
+}

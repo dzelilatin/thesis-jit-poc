@@ -40,6 +40,7 @@ import pandas as pd
 import torch
 from imblearn.over_sampling import SMOTE
 from imblearn.under_sampling import RandomUnderSampler
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import average_precision_score, precision_recall_curve, roc_auc_score
 from sklearn.preprocessing import StandardScaler
@@ -92,13 +93,19 @@ def make_model(clf, params, y):
     if clf == "logistic_regression":
         return LogisticRegression(max_iter=2000, C=params.get("C", 1.0),
                                   class_weight=params.get("class_weight", "balanced"), random_state=SEED)
+    if clf == "random_forest":
+        return RandomForestClassifier(n_estimators=params.get("n_estimators", 100), max_depth=params.get("max_depth"),
+                                      min_samples_leaf=params.get("min_samples_leaf", 1),
+                                      max_features=params.get("max_features", "sqrt"),
+                                      class_weight=params.get("class_weight", "balanced"), random_state=SEED, n_jobs=4)
     rest = {k: v for k, v in params.items() if k != "scale_pos_weight"}
     rest.setdefault("n_estimators", 200)
     return XGBClassifier(scale_pos_weight=params.get("scale_pos_weight", neg_pos), eval_metric="logloss",
                          verbosity=0, random_state=SEED, n_jobs=1, tree_method="hist", **rest)
 
 
-UNWEIGHTED = {"logistic_regression": {"class_weight": None}, "xgboost": {"scale_pos_weight": 1.0}}
+UNWEIGHTED = {"logistic_regression": {"class_weight": None}, "random_forest": {"class_weight": None},
+              "xgboost": {"scale_pos_weight": 1.0}}
 
 
 def fit_predict(clf, params, X, y, targets):
@@ -181,6 +188,12 @@ def tune(clf, X, y, X_val, y_val, trials):
         if clf == "logistic_regression":
             params = {"C": trial.suggest_float("C", 1e-4, 10.0, log=True),
                       "class_weight": trial.suggest_categorical("class_weight", ["balanced", None])}
+        elif clf == "random_forest":
+            params = {"n_estimators": trial.suggest_int("n_estimators", 100, 300),
+                      "max_depth": trial.suggest_int("max_depth", 4, 20),
+                      "min_samples_leaf": trial.suggest_int("min_samples_leaf", 1, 10),
+                      "max_features": trial.suggest_categorical("max_features", ["sqrt", 0.1, 0.3]),
+                      "class_weight": trial.suggest_categorical("class_weight", ["balanced", "balanced_subsample", None])}
         else:
             params = {"n_estimators": trial.suggest_int("n_estimators", 100, 400),
                       "learning_rate": trial.suggest_float("learning_rate", 0.01, 0.3, log=True),
@@ -307,6 +320,6 @@ def summarize(out):
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--trials", type=int, default=20)
-    ap.add_argument("--classifiers", nargs="+", default=["logistic_regression", "xgboost"])
+    ap.add_argument("--classifiers", nargs="+", default=["logistic_regression", "random_forest", "xgboost"])
     ap.add_argument("--configs", nargs="+", default=["metrics_only", "hybrid"])
     run(ap.parse_args())

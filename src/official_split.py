@@ -38,7 +38,7 @@ from train_eval import all_metrics, make_classifier, raw_features
 
 DATASET_DIR = DATA_DIR / "apachejit" / "dataset"
 TEST_FILES = {"test_large": "apachejit_test_large.csv", "test_small": "apachejit_test_small.csv"}
-CLASSIFIERS = ("logistic_regression", "xgboost")
+CLASSIFIERS = ("logistic_regression", "random_forest", "xgboost")
 CONFIGS = ("metrics_only", "hybrid")
 PREVALENCES = (0.265, 0.5)
 RESAMPLES = 200

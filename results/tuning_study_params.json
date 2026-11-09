@@ -1,0 +1,32 @@
+{
+  "logistic_regression/metrics_only S3": {
+    "C": 0.00402468456908552,
+    "class_weight": "balanced",
+    "val_avg_precision": 0.2524
+  },
+  "logistic_regression/hybrid S3": {
+    "C": 0.0026188373443117104,
+    "class_weight": null,
+    "val_avg_precision": 0.287
+  },
+  "xgboost/metrics_only S3": {
+    "n_estimators": 127,
+    "learning_rate": 0.013270369052342142,
+    "max_depth": 3,
+    "subsample": 0.8435414799450515,
+    "colsample_bytree": 0.9434645496041589,
+    "min_child_weight": 7,
+    "scale_pos_weight": 2.0136455358937915,
+    "val_avg_precision": 0.2813
+  },
+  "xgboost/hybrid S3": {
+    "n_estimators": 399,
+    "learning_rate": 0.01463540802438702,
+    "max_depth": 4,
+    "subsample": 0.9611207352836906,
+    "colsample_bytree": 0.5103010654814059,
+    "min_child_weight": 3,
+    "scale_pos_weight": 2.018027668683792,
+    "val_avg_precision": 0.308
+  }
+}

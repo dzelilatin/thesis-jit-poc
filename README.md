@@ -43,6 +43,19 @@ Options for `run_poc.py`: `--train-sample N`, `--test-sample N` (stratified subs
 
 Mined diffs and embeddings are cached in `data/cache/`, so an interrupted run resumes. On an Apple M4 Pro (MPS), mining took about 6 minutes per split, embedding about 36 minutes for 18,160 commits (7.6 to 8.7 commits per second), and the full run about 50 minutes.
 
+## Follow-up analyses
+
+Run after `run_poc.py`; they reuse the cached diffs and embeddings.
+
+```bash
+python src/diagnostics.py               # why AUC-ROC is high while F1 is low (prevalence, ranking, thresholds)
+python scripts/embed_validation.py      # embeds the validation split (about 10 minutes), needed by the next step
+python src/tuning_study.py              # threshold, class balancing, Optuna tuning and recency windows, selected on validation
+python src/official_split.py            # official ApacheJIT split (balanced training set) restricted to Camel
+```
+
+`tuning_study.py` and `official_split.py` also report precision and F1 on test subsets with 26.5% and 50% defect-inducing commits. These use the same predictions and change only the class mix of the evaluation, so they are shown next to, not instead of, the results at the natural prevalence.
+
 ## Results
 
 | File | Content |
@@ -52,6 +65,9 @@ Mined diffs and embeddings are cached in `data/cache/`, so an interrupted run re
 | `results/poc_predictions.csv` | probability and label of every test prediction |
 | `results/poc_paired_bootstrap.csv` | differences between configurations with 95% intervals |
 | `results/poc_run_info.json` | split statistics, extraction counts and timing |
+| `results/poc_diagnostics.csv`, `poc_prevalence_projection.csv` | ranking quality, thresholds and precision/F1 at other prevalences |
+| `results/tuning_study.csv`, `tuning_study_paired.csv`, `tuning_study_params.json` | scenario study (validation-selected), paired differences on test, tuned hyperparameters |
+| `results/official_split_results.csv` | official ApacheJIT split, Camel only |
 
 ## Limitations
 
